@@ -51,6 +51,7 @@ class Kernel vmMirror: vmMirror = Object <: Value (
     (* Converting, Convenience *)
     public , element = ( ^ (Vector new append: self) append: element )
     public hashcode  = ( ^ vmMirror objHashcode: self )
+    public hash = ( ^ hashcode ) (* for moth *)
 
     (* Newspeak requirements
        This works around restrictions by the absense of a global scope,
@@ -219,6 +220,7 @@ class Kernel vmMirror: vmMirror = Object <: Value (
     public as32BitUnsignedValue = ( ^ vmMirror intAs32BitUnsignedValue: self ) (* returns an int, with the value that a unsigned 32-bit integer would have *)
     public asCodepointString = ( ^ vmMirror intAsCodepointString: self )
     public hashcode    = ( ^ self )
+    public asInteger = ( ^ self ) (* for moth *)
 
     (* Iterating *)
     public to: limit do: block = (
