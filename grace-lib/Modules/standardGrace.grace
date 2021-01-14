@@ -1,5 +1,5 @@
 //def doneBrand: Unknown = brand
-type Done = interface {} //doneBrand.Type 
+type Done = interface {} //doneBrand.Type
 //doneBrand.brand(done)
 
 class brand -> Unknown {
@@ -68,6 +68,11 @@ method do (body: Invokable) while (cond: Invokable) -> Done {
      return while (cond) do (body)
   }
   done
+}
+
+method for(collection: Collection) do(body: Invokable) -> Done {    //to check: is each -> required in for loop
+    collection.do(body)
+    done
 }
 
 method valueOf (exp: Invokable) -> Unknown {

@@ -276,7 +276,7 @@ class collection[[T]] {
     method do(block1) {
         var i := 1
         while {i <= inner.size} do {
-            block1.apply(inner.at(i))
+            block1.apply(inner.at(i))   //doesn't work if there's no each
             i := i + 1
         }
     }
@@ -565,10 +565,6 @@ class range {
 
             method reversed {
                 from(upper)downTo(lower)
-            }
-
-            method ==(other) {
-                //TODO: haven't implemented enough about base collection class yet
             }
 
             method iterator -> Iterator {   //TODO add is override when it is implemented
@@ -956,6 +952,10 @@ class set {
                 }
             }
 
+            method do(action) {
+                dict.keysDo(action)
+            }
+
             method clear {
                 dict.clear
                 self
@@ -1269,6 +1269,10 @@ class dictionary {
                     }
                     i := i + 1
                 }
+            }
+
+            method do(action) {
+                valuesDo(action)
             }
 
             method copy {
