@@ -401,6 +401,16 @@ method testCreateDictionary {
     "testCreateDictionary passed"
 }
 
+method testAddDictionary {
+    def d = col.abbreviations.dictionary(col.bind("a",12), col.bind("b", 13))
+
+    d.at("c")put(14)
+    if(d.at("c") != 14) then { "testAddDictionary failed" }
+    d.at("a")put(15)
+    if(d.at("a") != 15) then { "testAddDictonary failed" }
+    "testAddDictionary passed"
+}
+
 method testAbsentDictionary {
     def d = col.abbreviations.dictionary(col.bind("a", 12),col.bind("a", 12),col.bind("b", 13))
 
