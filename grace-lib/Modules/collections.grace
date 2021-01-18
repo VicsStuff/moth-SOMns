@@ -1051,6 +1051,7 @@ class bind(k, v) {    //TODO: temp fix for the fact that K::T is not implemented
     method hash {
         31 * key.hash * value.hash
     }
+
     method ==(x) {
         def xValue = 31 * x.key.hash * x.value.hash
         def selfValue = 31 * key.hash * value.hash

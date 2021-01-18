@@ -70,7 +70,7 @@ method do (body: Invokable) while (cond: Invokable) -> Done {
   done
 }
 
-method for(collection: Collection) do(body: Invokable) -> Done {    //to check: is each -> required in for loop
+method for(collection: Collection) do(body: Invokable) -> Done {
     collection.do(body)
     done
 }

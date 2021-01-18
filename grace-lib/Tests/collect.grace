@@ -428,13 +428,16 @@ method testContainsDictionary {
 }
 
 method testRemoveDictionary {
-    def d = col.abbreviations.dictionary(col.bind("a", 12),col.bind("b", 13),col.bind("c", 14),col.bind("d", 15))
+    def d = col.abbreviations.dictionary(col.bind("a", 12),col.bind("b", 13),col.bind("c", 14),col.bind("d", 15), col.bind("e",16), col.bind("f",17))
 
     d.removeKey("a")
-    if((d.size != 3) || (d.containsKey("a")) || (d.containsValue(12))) then { return "testRemoveDictionary failed" }
+    if((d.size != 5) || (d.containsKey("a")) || (d.containsValue(12))) then { return "testRemoveDictionary failed" }
 
     d.removeValue(14)
-    if((d.size != 2) || d.containsKey("c") || d.containsValue(14)) then { return "testRemoveDictionary failed" }
+    if((d.size != 4) || d.containsKey("c") || d.containsValue(14)) then { return "testRemoveDictionary failed" }
+
+    d.removeAllKeys(col.abbreviations.list("d", "e"))
+    if((d.size != 2) || d.containsKey("d") || d.containsKey("e")) then { return "testRemoveDictionary failed" }
 
     d.clear
     if((d.size != 0) || d.containsKey("b") || d.containsKey("d")) then { return "testRemoveDictionary failed" }
@@ -450,16 +453,20 @@ method testCopyDictionary {
 }
 
 method testFuncDictionary {
-    def d1 = col.abbreviations.dictionary(col.bind("a", 12),col.bind("b", 13))
-    def d2 = col.abbreviations.dictionary(col.bind("c", 14),col.bind("d", 15))
+    var d1 := col.abbreviations.dictionary(col.bind("a", 12),col.bind("b", 13))
+    var d2 := col.abbreviations.dictionary(col.bind("c", 14),col.bind("d", 15))
 
-    def d3 = d1 ++ d2
+    var d3 := d1 ++ d2
     if(!d3.contains(12) || !d3.contains(13) || !d3.contains(14) || !d3.contains(15)) then { return "testFuncDictionary failed" }
 
     def d4 = d3 -- d1
     if(d4.contains(12) || d4.contains(13)) then { return "testFuncDictionary failed" }
 
     def d5 = d3 >> col.abbreviations.seq(1,2,3)
+
+    d2 := col.abbreviations.dictionary(col.bind("a", 14),col.bind("d", 15))
+    d3 := d1 ++ d2
+    if(!d3.contains(13) || !d3.contains(14) || !d3.contains(15)) then { return "testFuncDictionary failed" }
     "testFuncDictionary passed"
 }
 
