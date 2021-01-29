@@ -1,4 +1,6 @@
 import "/../Modules/collections" as col
+//inherit col.abbreviations
+import "/../Modules/matrix" as matrix
 
 method testCreateList {
     def l: List = col.abbreviations.list(15, 67, -8)
@@ -124,12 +126,12 @@ method testAllSatisfyList {
     var value := a.allSatisfy { num ->
         num == 4
     }
-    if(!value) then { return "testAllSatisfy failed" }
+    if(!value) then { return "testAllSatisfyList failed" }
     value := a.allSatisfy { num ->
         num != 4
     }
-    if(value) then { return "testAllSatisfy failed" }
-    "testAllSatisfySet passed"
+    if(value) then { return "testAllSatisfyList failed" }
+    "testAllSatisfyList passed"
 }
 
 method testFuncList {
@@ -394,7 +396,7 @@ method testMapSet {
 }
 
 method testCreateDictionary {
-    def d = col.abbreviations.dictionary(col.bind("a", 12),col.bind("a", 12),col.bind("b", 13))
+    def d = col.abbreviations.dictionary("a" :: 12,"a" :: 12,"b" :: 13)
 
     if(d.size != 2) then { "testCreateDictionary failed" }
     if((d.at("a") != 12) || (d.at("b") != 13)) then { "testCreateDictionary failed" }
@@ -402,7 +404,7 @@ method testCreateDictionary {
 }
 
 method testAddDictionary {
-    def d = col.abbreviations.dictionary(col.bind("a",12), col.bind("b", 13))
+    def d = col.abbreviations.dictionary("a" :: 12, "b" :: 13)
 
     d.at("c")put(14)
     if(d.at("c") != 14) then { "testAddDictionary failed" }
@@ -412,7 +414,7 @@ method testAddDictionary {
 }
 
 method testAbsentDictionary {
-    def d = col.abbreviations.dictionary(col.bind("a", 12),col.bind("a", 12),col.bind("b", 13))
+    def d = col.abbreviations.dictionary("a" :: 12,"a" :: 12,"b" :: 13)
 
     if(d.at("a")ifAbsent{ -3 } != 12) then { return "testAbsentDictionary failed" }
     if(d.at("r")ifAbsent{ -3 } != -3) then { return "testAbsentDictionary failed" }
@@ -420,7 +422,7 @@ method testAbsentDictionary {
 }
 
 method testContainsDictionary {
-    def d = col.abbreviations.dictionary(col.bind("a", 12),col.bind("a", 12),col.bind("b", 13))
+    def d = col.abbreviations.dictionary("a" :: 12,"a" :: 12,"b" :: 13)
 
     if(!d.containsKey("a") || d.containsKey("r")) then { return "testContainsDictionary failed" }
     if(!d.containsValue(12) || !d.contains(13)) then { return "testContainsDictionary failed" }
@@ -428,7 +430,7 @@ method testContainsDictionary {
 }
 
 method testRemoveDictionary {
-    def d = col.abbreviations.dictionary(col.bind("a", 12),col.bind("b", 13),col.bind("c", 14),col.bind("d", 15), col.bind("e",16), col.bind("f",17))
+    def d = col.abbreviations.dictionary("a" :: 12,"b" :: 13,"c" :: 14,"d" :: 15, "e" :: 16, "f" :: 17)
 
     d.removeKey("a")
     if((d.size != 5) || (d.containsKey("a")) || (d.containsValue(12))) then { return "testRemoveDictionary failed" }
@@ -445,7 +447,7 @@ method testRemoveDictionary {
 }
 
 method testCopyDictionary {
-    def d = col.abbreviations.dictionary(col.bind("a", 12),col.bind("b", 13))
+    def d = col.abbreviations.dictionary("a" :: 12,"b" :: 13)
 
     def a = d.copy
     if(!a.containsKey("a") || !a.containsKey("b") || !a.contains(12) || !a.contains(13)) then { return "testCopyDictionary failed" }
@@ -453,8 +455,8 @@ method testCopyDictionary {
 }
 
 method testFuncDictionary {
-    var d1 := col.abbreviations.dictionary(col.bind("a", 12),col.bind("b", 13))
-    var d2 := col.abbreviations.dictionary(col.bind("c", 14),col.bind("d", 15))
+    var d1 := col.abbreviations.dictionary("a" :: 12,"b" :: 13)
+    var d2 := col.abbreviations.dictionary("c" :: 14,"d" :: 15)
 
     var d3 := d1 ++ d2
     if(!d3.contains(12) || !d3.contains(13) || !d3.contains(14) || !d3.contains(15)) then { return "testFuncDictionary failed" }
@@ -464,7 +466,7 @@ method testFuncDictionary {
 
     def d5 = d3 >> col.abbreviations.seq(1,2,3)
 
-    d2 := col.abbreviations.dictionary(col.bind("a", 14),col.bind("d", 15))
+    d2 := col.abbreviations.dictionary("a" :: 14,"d" :: 15)
     d3 := d1 ++ d2
     if(!d3.contains(13) || !d3.contains(14) || !d3.contains(15)) then { return "testFuncDictionary failed" }
     "testFuncDictionary passed"
@@ -506,4 +508,131 @@ method testSortCollections {
     }
     if((l.at(1) != 9) || (l.at(2) != 8) || (l.at(3) != 4) || (l.at(4) != 2)) then { return "testSortCollections failed" }
     "testSortCollections passed"
+}
+
+method testBinding {
+    var o := 13 :: "g"
+    var r := 13 :: "g"
+
+    if((o.key != 13) || (o.value != "g")) then { return "testBinding failed, key and value failed" }
+    if(!(o == r)) then { return "testBinding failed, equals failed" }
+    "testBinding passed"
+}
+
+method testCreateMatrix {
+    var m := matrix.matrix(1,4).withAll(col.abbreviations.seq(1,2,3,4))
+    var m2 := matrix.matrix(2,4).withAll(col.abbreviations.seq(1,2,3,4,5,6,7,8))
+
+    if((m.atRow(1)column(1) != 1) || (m.atRow(1)column(2) != 2) ||
+     (m.atRow(1)column(3) != 3) || (m.atRow(1)column(4) != 4)) then "testCreateMatrix failed"
+
+    if((m2.atRow(1)column(1) != 1) || (m2.atRow(1)column(2) != 2) ||
+     (m2.atRow(1)column(3) != 3) || (m2.atRow(1)column(4) != 4)) then "testCreateMatrix failed"
+
+    if((m2.atRow(2)column(1) != 5) || (m2.atRow(2)column(2) != 6) ||
+     (m2.atRow(2)column(3) != 7) || (m2.atRow(2)column(4) != 8)) then "testCreateMatrix failed"
+
+    //m := matrix.matrix(2,4).rows(col.abbreviations.seq(col.abbreviations.seq(1,2,3,4), col.abbreviations.seq(5,6,7,8))) //doesn't work
+    //columns won't work as well
+
+    "testCreateMatrix passed"
+}
+
+method testAddMatrix {
+    var m := matrix.matrix(2,3).withAll(col.abbreviations.seq(1,2,3,4,5,6))
+    var m2 := matrix.matrix(2,3).withAll(col.abbreviations.seq(1,2,3,4,5,6))
+
+    def m3 = m + m2
+    if((m3.atRow(1)column(1) != 2) || (m3.atRow(1)column(2) != 4) || (m3.atRow(1)column(3) != 6)
+       || (m3.atRow(2)column(1) != 8) || (m3.atRow(2)column(2) != 10) || (m3.atRow(2)column(3) != 12)) then { return "testAddMatrix failed" }
+
+    "testAddMatrix passed"
+}
+
+method testSubMatrix {
+    var m := matrix.matrix(2,3).withAll(col.abbreviations.seq(1,2,3,4,5,6))
+    var m2 := matrix.matrix(2,3).withAll(col.abbreviations.seq(1,2,3,4,5,6))
+
+    def m3 = m - m2
+    if((m3.atRow(1)column(1) != 0) || (m3.atRow(1)column(2) != 0) || (m3.atRow(1)column(3) != 0)
+       || (m3.atRow(2)column(1) != 0) || (m3.atRow(2)column(2) != 0) || (m3.atRow(2)column(3) != 0)) then { return "testAddMatrix failed" }
+    "testSubMatrix passed"
+}
+
+method testMulMatrix {
+    var m := matrix.matrix(2,3).withAll(col.abbreviations.seq(1,2,3,4,5,6))
+
+    var m3 := m * 2
+
+    if((m3.atRow(1)column(1) != 2) || (m3.atRow(1)column(2) != 4) || (m3.atRow(1)column(3) != 6)
+       || (m3.atRow(2)column(1) != 8) || (m3.atRow(2)column(2) != 10) || (m3.atRow(2)column(3) != 12)) then { return "testMulMatrix failed" }
+
+    "testMulMatrix passed"
+}
+
+method testDivMatrix {
+    var m := matrix.matrix(2,3).withAll(col.abbreviations.seq(1,2,3,4,5,6))
+
+    var m3 := m / 2
+
+    if((m3.atRow(1)column(1) != 0.5) || (m3.atRow(1)column(2) != 1.0) || (m3.atRow(1)column(3) != 1.5)
+       || (m3.atRow(2)column(1) != 2.0) || (m3.atRow(2)column(2) != 2.5) || (m3.atRow(2)column(3) != 3.0)) then { return "testDivMatrix failed" }
+
+    "testDivMatrix passed"
+}
+
+method testTimesMat {
+    var m :=  matrix.matrix(2,3).withAll(col.abbreviations.seq(5,1,4,3,7,2))
+    var m2 :=  matrix.matrix(3,3).withAll(col.abbreviations.seq(1,2,3,6,3,3,8,3,3))
+    var m3 := m.times(m2)
+
+    if((m3.atRow(1)column(1) != 43) || (m3.atRow(1)column(2) != 25) || (m3.atRow(1)column(3) != 30)
+       || (m3.atRow(2)column(1) != 61) || (m3.atRow(2)column(2) != 33) || (m3.atRow(2)column(3) != 36)) then { return "testTimesMat failed" }
+
+    "testTimesMat passed"
+}
+
+method testReshapeMat {
+    var m :=  matrix.matrix(2,3).withAll(col.abbreviations.seq(5,1,4,3,7,2))
+
+    m.reshapeWithNumRows(3)numColumns(2)
+    if((m.numRows != 3) || (m.numColumns != 2)) then { return "testReshapeMat failed, reshapeWithNumRowsnumColumns failed" }
+
+    m.reshapeWithNumRows(2)numColumns(4)additionalValues(col.abbreviations.seq(8,8))
+    if((m.numRows != 2) || (m.numColumns != 4)) then { return "testReshapeMat failed, reshapeWithNumRowsnumColumns failed" }
+
+    "testReshapeMat passed"
+}
+
+method testAddDelRowMat {
+    var m :=  matrix.matrix(2,3).withAll(col.abbreviations.seq(5,1,4,3,7,2))
+
+    m.addRow(col.abbreviations.seq(1,2,3))at(1)
+    if((m.atRow(1)column(1) != 1) || (m.atRow(1)column(2) != 2) || (m.atRow(1)column(3) != 3)) then { return "testAddDelRowMat failed, add failed" }
+    m.deleteRow(1)
+    if((m.atRow(1)column(1) != 5) || (m.atRow(1)column(2) != 1) || (m.atRow(1)column(3) != 4)) then { return "testAddDelRowMat failed, delete failed" }
+
+    "testAddDelRowMat passed"
+}
+
+method testAddDelColMat {
+    var m := matrix.matrix(2,3).withAll(col.abbreviations.seq(5,1,4,3,7,2))
+
+    m.addColumn(col.abbreviations.seq(1,2))at(2)
+    if((m.atRow(1)column(2) != 1) || (m.atRow(2)column(2) != 2)) then { return "testAddDeColMat failed, add failed" }
+    m.deleteColumn(2)
+    if((m.atRow(1)column(2) != 1) || (m.atRow(2)column(2) != 7)) then { return "testAddDeColMat failed, delete failed" }
+    "testAddDelColMat passed"
+}
+
+method testReplaceMat {
+    var m :=  matrix.matrix(3,3).withAll(col.abbreviations.seq(1,2,3,6,3,3,8,3,3))
+
+    m.replaceRowAt(1)with(col.abbreviations.seq(7,7,7))
+    if((m.atRow(1)column(1) != 7) || (m.atRow(1)column(2) != 7) || (m.atRow(1)column(3) != 7)) then { return "testReplaceMat failed, replace row failed" }
+
+    m.replaceColumnAt(2)with(col.abbreviations.seq(4,4,4))
+    if((m.atRow(1)column(2) != 4) || (m.atRow(2)column(2) != 4) || (m.atRow(3)column(2) != 4)) then { return "testAddDeColMat failed, replace column failed" }
+
+    "testReplaceMat passed"
 }

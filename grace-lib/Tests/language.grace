@@ -126,7 +126,7 @@ method testFor {
     }
     if(v != 10) then { return "testFor failed on {v} != 10" }
 
-    def d = col.abbreviations.dictionary(col.bind("a", 6),col.bind("b", 7),col.bind("c", 8))
+    def d = col.abbreviations.dictionary("a" :: 6,"b" :: 7,"c" :: 8)
     v := 0
     for(d) do { each ->
         v := v + each

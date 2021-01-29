@@ -10,6 +10,10 @@ class brand -> Unknown {
   }
 }
 
+class equality {
+    method :: (obj) { binding.key(self)value(obj) }
+}
+
 type Number = interface {
   + (other)
   - (other)

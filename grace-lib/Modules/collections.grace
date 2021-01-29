@@ -87,6 +87,7 @@ type Sequence[[T]] = Sequenceable[[T]] & interface {
 }
 
 type List[[T]] = Sequenceable[[T]] & interface {
+    at(ix:Number) put(v:T)
     add(new:T) -> List[[T]]
     addLast(new:T) -> List[[T]]
     addFirst(new:T) -> List[[T]]
@@ -99,6 +100,7 @@ type List[[T]] = Sequenceable[[T]] & interface {
     removeLast -> T
     removeAll(elements: Collection[[T]]) -> List[[T]]
     removeAll(elements: Collection[[T]]) ifAbsent(action:Function0[[Unknown]]) -> List[[T]]
+    insert(elt:T)at(n:Number) -> List[[T]]
     clear -> List[[T]]
     insert(element:T)at(n:Number) -> List[[T]]
     sort -> List[[T]]
@@ -179,8 +181,36 @@ class dictionaryFactoryTrait[[T]] { //TODO: make into a trait when traits are im
     method empty -> Dictionary[[K,T]] { self.withAll [] }
 }
 
+class iteratorConcat[[T]](left:Iterator[[T]], right:Iterator[[T]]) {
+    print "aaa"
+    method next {
+        print "at her31"
+        if(left.hasNext) then {
+            left.next
+        } else {
+            right.next
+        }
+    }
+    method hasNext {
+        if(left.hasNext) then { return true }   //error of if then not working for rows() matrix is found here
+        return right.hasNext
+    }
+    method asString { "an iterator over a concatenation" }
+}
+
+class lazyConcatenation[[T]](left,right) -> Enumerable[[T]] {
+    //TODO: add use enumerable[[Collection[[T]]]] when use works
+    inherit enumerable[[T]]
+    method iterator {
+        var t := iteratorConcat(left.iterator, right.iterator)
+        t
+    }
+    method size { left.size + right.size }
+}
+
 class lazySequenceOver[[T,R]](source: Collection[[T]]) mappedBy(function:Block1[[T,R]]) -> Enumerable[[R]] {
-    //inherit enumerable[[T]]   //getting null location assertion error here
+    inherit enumerable[[T]]   //getting null location assertion error here
+
     class iterator {
         def sourceIterator = source.iterator
         method asString { "an iterator over a lazy map sequence" }
@@ -200,7 +230,7 @@ class lazySequenceOver[[T,R]](source: Collection[[T]]) mappedBy(function:Block1[
 }
 
 class lazySequenceOver[[T,R]](source: Collection[[T]]) filteredBy(predicate:Block1[[T,Boolean]]) {
-    //inherit enumerable[[T]] //getting null location assertion error here, ask erin what's going on
+    //inherit enumerable[[T]] //getting null location assertion error here
     class iterator {
         var cache
         var cacheLoaded := false
@@ -274,10 +304,10 @@ class collection[[T]] {
     }
 
     method do(block1) {
-        var i := 1
-        while {i <= inner.size} do {
-            block1.apply(inner.at(i))   //doesn't work if there's no each
-            i := i + 1
+        var iter := self.iterator
+
+        while {iter.hasNext} do {   //ERROR FOR MATRIX ROWS, VALUE FROM NEXT DOESN'T EXIST?
+            block1.apply(iter.next)
         }
     }
 
@@ -299,7 +329,7 @@ class collection[[T]] {
     method ++(other) {
         def l = list.withAll(self)
         l.addAll(other)
-        seq.withAll(l)
+        list.withAll(l)
     }
 
     method ==(other) {
@@ -637,10 +667,6 @@ class range {
                 sequence.withAll(self, other)
             }
 
-            method ==(other) {
-                //TODO: haven't implemented enough about base collection class yet
-            }
-
             method iterator {   //TODO add is override when it is implemented
                 object {
                     var val := start
@@ -676,6 +702,15 @@ class list[[T]] {
                 inner.putAt(i, a.at(i))
                 i := i + 1
                 size := size + 1
+            }
+
+            method at(n) put(v) {
+                if(n == (size + 1)) then {
+                    addLast(v)
+                } else {
+                    boundsCheck(n)
+                    inner.putAt((n), v)
+                }
             }
 
             method add(e) {
@@ -1044,23 +1079,6 @@ class set {
     }
 }
 
-class bind(k, v) {    //TODO: temp fix for the fact that K::T is not implemented yet
-    def key = k
-    def value = v
-
-    method hash {
-        31 * key.hash * value.hash
-    }
-
-    method ==(x) {
-        def xValue = 31 * x.key.hash * x.value.hash
-        def selfValue = 31 * key.hash * value.hash
-        xValue == selfValue
-    }
-
-    method asString { "{key}::{value}" }
-}
-
 class dictionary {
     inherit collectionFactoryTrait[[T]]
 
@@ -1110,7 +1128,7 @@ class dictionary {
                 if((inner.at(t) == unused) || (inner.at(t) == removed)) then {
                     numBindings := numBindings + 1
                 }
-                inner.putAt(t,bind(key,value))
+                inner.putAt(t, key :: value)
                 if((size * 2) > inner.size) then { expand }
                 self
             }
@@ -1462,3 +1480,24 @@ class abbreviations {
     method dictionary(a,b,c,d,e,f,g,h) { outerAccess.dictionary.withAll (seq(a,b,c,d,e,f,g,h)) }
     method dictionary(a,b,c,d,e,f,g,h,i) { outerAccess.dictionary.withAll (seq(a,b,c,d,e,f,g,h,i)) }
 }
+
+//...........................................0.........0...........................................
+//...........................................00.......00...........................................
+//............................................0.......0............................................
+//..............................................00000..............................................
+//............................................000000000............................................
+//..0000000000000000000000000000000000000000000.00000.0000000000000000000000000000000000000000000..
+//...000000000000000000i....i00000000000000000.0.000.0.00000000000000000i....i000000000000000000...
+//.....00000000000000i..0000..i00000000000000.00..0..00.00000000000000i..0000..i00000000000000.....
+//........00000000000..000000..000000000000..000.....000..000000000000..000000..00000000000........
+//..........000000000i..0000..i0000000000..00000..0..00000..0000000000i..0000..i0000000000.........
+//............000000000i....i0000000000..00000...000...00000..0000000000i....i000000000............
+//...............000000000000000000...0000000...00000...0000000...000000000000000000...............
+//..................000000000000...000000000...0000000...000000000...000000000000..................
+//...............................0000000000..._________...0000000000...............................
+//........................00000000..000000...00000000000...000000..00000000........................
+//.........................00..i00i.0000....0000000000000....0000.i00i..00.........................
+//...........................00...0000......_____________......0000...00...........................
+//.............................0000.........0000000000000.........0000.............................
+//...........................................00000000000...........................................
+//..............................................00000..............................................

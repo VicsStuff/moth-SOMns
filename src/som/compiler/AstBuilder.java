@@ -863,6 +863,10 @@ public class AstBuilder {
       arguments.add(0, receiver);
       SSymbol selectorAfterChecks = selector;
 
+      if (selector.getString().equals("::")) {
+        return explicit(symbolFor("bind:"), arguments.get(1), arguments, sourceSection);
+      }
+
       // NOTE: Cast functionality to allow us to add manual casts
       if (selector.getString().equals("cast:")) {
         return TypeCheckNode.create(receiver, arguments.get(1), sourceSection);

@@ -72,6 +72,8 @@ class Kernel vmMirror: vmMirror = Object <: Value (
     public println  = ( vmMirror printNewline: self asString )
     public halt     = ( vmMirror halt: self )
     public asString = ( ^ 'instance of ' + (vmMirror objClassName: self) )
+    (* add bind for moth *)
+    public bind: other = ( ^ Binding key: other value: self )
   )
 
   public class Type = Value ()
@@ -94,6 +96,16 @@ class Kernel vmMirror: vmMirror = Object <: Value (
     public <> other = ( ^ (self = other) not )
     public != other = ( ^ self <> other )
     public copy = ( ^ self )
+  )
+
+  public class Binding key: k value: v = Object ( |
+    public key ::= k.
+    public value ::= v.
+  | )
+  (
+    public hashcode = ( ^ 31 * key hashcode * value hashcode )
+    public == other = ( ^ key == other key && value == other value ) (* is not called *)
+    public asString = ( ^ key asString + '::' + value asString )
   )
 
   (* Transfer objects are handled almost identically to normal objects.
