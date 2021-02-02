@@ -1,6 +1,6 @@
  import "/../Modules/collections" as col
 
- type Matrix[[T]] = Collection[[T]] & interface {
+ type Matrix[[T]] = col.Collection[[T]] & interface {
     size -> Number
     numRows -> Number
     numColumns -> Number
@@ -37,6 +37,11 @@
     numRows -> Number
     numColumns -> Number
     atRow(r:Number) column(c:Number)
+ }
+
+
+ type ImplementsTimesOperator[[K]] = interface {
+    *(other) -> K
  }
 
  method dot(v1: Collection, v2: Collection) {
@@ -97,7 +102,7 @@
         rows(mapColumnsToRows(c))
     }
 
-    class values(vs: Collection[[T]]) -> Matrix[[T]] {
+    class values(vs: Col.Collection[[T]]) -> Matrix[[T]] {
         if((rs * cs) != vs.size) then { error("dimensions {rs}x{cs} is not compatible with values of size {vs.size}") }
         var impl := vs >> col.abbreviations.list
 
@@ -272,22 +277,25 @@
             applyMatrixOperation{a, b -> a - b} with (other)
         }
 
-        method *(other) {   //only works for scalar multiplication rn
-            applyScalarOperation{a, b -> a * b} with (other)
-            //type matching doesn't work
-            //if(ComparableToMatrix.matches(other)) then {
-            //    applyMatrixOperation{a, b -> a * b} with (other)
-            //    return
-            //}
-            //if { ImplementsTimesOperator.matches(other) } then {
-            //    applyScalarOperation{a, b -> a * b} with (other)
-            //    return
-            //}
-            //error("Type of {other} does not support operator *")
+        method *(other) {
+            if(ComparableToMatrix.matches(other)) then {
+                return applyMatrixOperation{a, b -> a * b} with (other)
+            }
+            if (Number.matches(other)) then {
+                return applyScalarOperation{a, b -> a * b} with (other)
+            }
+            error("Type of {other} does not support operator *")
         }
 
         method /(other) {
-            applyScalarOperation{a, b -> a / b} with (other)
+            //applyScalarOperation{a, b -> a / b} with (other)
+            if(ComparableToMatrix.matches(other)) then {
+               return applyMatrixOperation{a, b -> a / b} with (other)
+            }
+            if (Number.matches(other)) then {
+               return applyScalarOperation{a, b -> a / b} with (other)
+            }
+            error("Type of {other} does not support operator //")
         }
 
         method transpose {  //does not work since rows does not work

@@ -561,22 +561,30 @@ method testSubMatrix {
 
 method testMulMatrix {
     var m := matrix.matrix(2,3).withAll(col.abbreviations.seq(1,2,3,4,5,6))
+    var m2 := matrix.matrix(2,3).withAll(col.abbreviations.seq(1,2,3,4,5,6))
 
     var m3 := m * 2
-
     if((m3.atRow(1)column(1) != 2) || (m3.atRow(1)column(2) != 4) || (m3.atRow(1)column(3) != 6)
-       || (m3.atRow(2)column(1) != 8) || (m3.atRow(2)column(2) != 10) || (m3.atRow(2)column(3) != 12)) then { return "testMulMatrix failed" }
+       || (m3.atRow(2)column(1) != 8) || (m3.atRow(2)column(2) != 10) || (m3.atRow(2)column(3) != 12)) then { return "testMulMatrix failed, scalar failed" }
+
+    m3 := m * m2
+    if((m3.atRow(1)column(1) != 1) || (m3.atRow(1)column(2) != 4) || (m3.atRow(1)column(3) != 9)
+       || (m3.atRow(2)column(1) != 16) || (m3.atRow(2)column(2) != 25) || (m3.atRow(2)column(3) != 36)) then { return "testMulMatrix failed, matrix failed" }
+
 
     "testMulMatrix passed"
 }
 
 method testDivMatrix {
     var m := matrix.matrix(2,3).withAll(col.abbreviations.seq(1,2,3,4,5,6))
+    var m2 := matrix.matrix(2,3).withAll(col.abbreviations.seq(1,2,3,4,5,6))
 
     var m3 := m / 2
-
     if((m3.atRow(1)column(1) != 0.5) || (m3.atRow(1)column(2) != 1.0) || (m3.atRow(1)column(3) != 1.5)
-       || (m3.atRow(2)column(1) != 2.0) || (m3.atRow(2)column(2) != 2.5) || (m3.atRow(2)column(3) != 3.0)) then { return "testDivMatrix failed" }
+       || (m3.atRow(2)column(1) != 2.0) || (m3.atRow(2)column(2) != 2.5) || (m3.atRow(2)column(3) != 3.0)) then { return "testDivMatrix failed, scalar failed" }
+    m3 := m / m2
+    if((m3.atRow(1)column(1) != 1) || (m3.atRow(1)column(2) != 1) || (m3.atRow(1)column(3) != 1)
+       || (m3.atRow(2)column(1) != 1) || (m3.atRow(2)column(2) != 1) || (m3.atRow(2)column(3) != 1)) then { return "testDivMatrix failed, matrix failed" }
 
     "testDivMatrix passed"
 }
