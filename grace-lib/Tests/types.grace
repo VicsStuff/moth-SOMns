@@ -23,66 +23,104 @@ method testTypedArgPasses {
   "testTypedArgPasses passed"
 }
 
+method testPrefixCompares {
+    //integer
+    var num := 1
+    if(!((<4).matches(num))) then { return "testPrefixCompares failed, for less than prefix" }
+    //FIXME: >4 does not work when it is in brackets
+    //if((>4).matches(num)) then { return "testPrefixCompares failed, for greater than prefix" }  //does not cause error when it's only >4
+    //if(!((<=4).matches(num))) then { return "testPrefixCompares failed, for less than or equal prefix" }
+    //num := 4
+    //if(!((<=4).matches(num))) then { return "testPrefixCompares failed, for less than or equal prefix" }
+    //num := 1
+    //if((>=4).matches(num)) then { return "testPrefixCompares failed, for greater than or equal prefix" }
+    //num := 4
+    //if(!((>=4).matches(num))) then { return "testPrefixCompares failed, for greater than or equal prefix" }
+
+    //double
+    //num := 1.5
+    //if(!((<4).matches(num))) then { return "testPrefixCompares failed, for less than prefix" }
+    //if((>4).matches(num)) then { return "testPrefixCompares failed, for greater than prefix" }
+    //if(!((<=4).matches(num))) then { return "testPrefixCompares failed, for less than or equal prefix" }
+    //num := 4.0
+    //if(!((<=4).matches(num))) then { return "testPrefixCompares failed, for less than or equal prefix" }
+    //num := 1.5
+    //if((>=4).matches(num)) then { return "testPrefixCompares failed, for greater than or equal prefix" }
+    //num := 4.0
+    //if(!((>=4).matches(num))) then { return "testPrefixCompares failed, for greater than or equal prefix" }
+
+    "testPrefixCompares passed"
+}
+
+method testCombinePatterns {
+    var num := 1
+    if(!num.matches(1)) then { return "testCombinePattern failed, failed on !" }
+    if(!(num.matches(4) | num.matches(1))) then { return "testCombinePattern failed, failed on |" }
+    if(num.matches(4) | num.matches(5)) then { return "testCombinePattern failed, failed on |" }
+
+    "testCombinePatterns passed"
+}
+
 method testTypedArgFailures {
-  { 
+  {
     withNumberArg(true);
     error("testTypedArgFailures failed, didn't produce error for Boolean (expected Number) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     withNumberArg("hello");
     error("testTypedArgFailures failed, didn't produce error for String (expected Number) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     withNumberArg(aFoo);
     error("testTypedArgFailures failed, didn't produce error for Foo (expected Number) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     withStringArg(true);
     error("testTypedArgFailures failed, didn't produce error for Boolean (expected String) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     withStringArg(1);
     error("testTypedArgFailures failed, didn't produce error for Number (expected String) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     withStringArg(aFoo);
     error("testTypedArgFailures failed, didn't produce error for Foo (expected String) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     withBooleanArg(1);
     error("testTypedArgFailures failed, didn't produce error for Number (expected Boolean) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     withBooleanArg("hello");
     error("testTypedArgFailures failed, didn't produce error for String (expected Boolean) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     withBooleanArg(aFoo);
     error("testTypedArgFailures failed, didn't produce error for Foo (expected Boolean) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     withFooArg(1);
     error("testTypedArgFailures failed, didn't produce error for Number (expected Foo) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     withFooArg("hello");
     error("testTypedArgFailures failed, didn't produce error for String (expected Foo) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     withFooArg(true);
     error("testTypedArgFailures failed, didn't produce error for Boolean (expected Foo) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
   "testTypedArgFailures passed"
 }
@@ -101,65 +139,65 @@ method testTypedReturnPasses {
 }
 
 method testTypedReturnFailures {
-  { 
+  {
     returnArgAsNumber(true);
     error("testTypedReturnFailures failed, didn't produce error for Boolean (expected Number) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     returnArgAsNumber("hello");
     error("testTypedReturnFailures failed, didn't produce error for String (expected Number) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     returnArgAsNumber(aFoo);
     error("testTypedReturnFailures failed, didn't produce error for Foo (expected Number) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     returnArgAsString(true);
     error("testTypedReturnFailures failed, didn't produce error for Boolean (expected String) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     returnArgAsString(1);
     error("testTypedReturnFailures failed, didn't produce error for Number (expected String) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     returnArgAsString(aFoo);
     error("testTypedReturnFailures failed, didn't produce error for Foo (expected String) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     returnArgAsBoolean(1);
     error("testTypedReturnFailures failed, didn't produce error for Number (expected Boolean) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     returnArgAsBoolean("hello");
     error("testTypedReturnFailures failed, didn't produce error for String (expected Boolean) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     returnArgAsBoolean(aFoo);
     error("testTypedReturnFailures failed, didn't produce error for Foo (expected Boolean) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     returnArgAsFoo(1);
     error("testTypedReturnFailures failed, didn't produce error for Number (expected Foo) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     returnArgAsFoo("hello");
     error("testTypedReturnFailures failed, didn't produce error for String (expected Foo) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
-  { 
+  {
     returnArgAsFoo(true);
     error("testTypedReturnFailures failed, didn't produce error for Boolean (expected Foo) ")
-  }.on (platform.kernel.TypeError) do {} 
+  }.on (platform.kernel.TypeError) do {}
 
   "testTypedReturnFailures passed"
 }
@@ -216,7 +254,7 @@ method testTypedLocalAssignmentFailures {
     var x: Boolean := aFoo
     error("testTypedLocalAssignmentFailures failed, didn't produce error for Foo (expected Boolean) ")
   }.on (platform.kernel.TypeError) do {}
-  
+
   {
     var x: Foo := 1
     error("testTypedLocalAssignmentFailures failed, didn't produce error for Number (expected Foo) ")
@@ -309,7 +347,7 @@ method testTypedFieldAssignmentFailures {
     }
     error("testTypedFieldAssignmentFailures failed, didn't produce error for Foo (expected Boolean) ")
   }.on (platform.kernel.TypeError) do {}
-  
+
   {
     object {
       var x: Foo := 1
@@ -340,7 +378,7 @@ method testExplicitCheckPasses {
   (interface {}).checkOrError(5)
 
   "testExplicitCheckPasses passed"
-} 
+}
 
 method testExplicitCheckFailures {
   {
@@ -364,7 +402,7 @@ method testBrandPasses {
   def a : myBrand.Type = 5
   def b : myBrand.Type = "test"
   "testBrandPasses passed"
-} 
+}
 
 method testBrandChanges {
   def myBrand = brand
@@ -373,12 +411,12 @@ method testBrandChanges {
     def a : myBrand.Type = 5
     error("testBrandChanges failed, didn't produce error for a value not in the brand")
   }.on (platform.kernel.TypeError) do {}
-  
+
   myBrand.brand(5)
 
   def b : myBrand.Type = 5
   "testBrandChanges passed"
-} 
+}
 
 method testBrandFailures {
   {
@@ -391,12 +429,12 @@ method testBrandFailures {
 method testTypeUnionPasses {
   def num : Number + String  = "5"
   "testTypeUnionPasses passed"
-} 
+}
 
 def x : TestType = 1
 class TestType -> Unknown {
       method checkOrError(a: Unknown) -> Unknown {
-        if (a == 1) then { 
+        if (a == 1) then {
           return a
         } else {
           platform.kernel.TypeError.signal("Not 1")

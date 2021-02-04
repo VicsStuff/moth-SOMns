@@ -280,7 +280,14 @@ public class JsonTreeTranslator {
 
     } else if (name.equals("prefix-") || name.equals("-")) {
       return symbolFor("negated");
-
+    } else if (name.equals("prefix<") || name.equals("<")) {
+      return symbolFor("lessThan");
+    } else if (name.equals("prefix>") || name.equals(">")) {
+      return symbolFor("greaterThan");
+    } else if (name.equals("prefix<=") || name.equals("<=")) {
+      return symbolFor("lessEqualThan");
+    } else if (name.equals("prefix>=") || name.equals(">=")) {
+      return symbolFor("greaterEqualThan");
     } else {
       error("The translator doesn't understand what to do with the `" + name
           + "` prefix operator", null);

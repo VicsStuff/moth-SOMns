@@ -98,6 +98,10 @@ class Kernel vmMirror: vmMirror = Object <: Value (
     public != other = ( ^ self <> other )
     public copy = ( ^ self )
 
+    public not = ( ^ NotPattern pat: Self )
+    public or: other = ( ^ OrPattern left: self right: other )
+    public and: other = ( ^ AndPattern left: self right: other )
+
     public matches: arg = ( ^ self == arg )
   )
 
@@ -144,7 +148,7 @@ class Kernel vmMirror: vmMirror = Object <: Value (
     (* Logical operations *)
     public || boolean = ( ^ self or: boolean  )
     public && boolean = ( ^ self and: boolean )
-    
+
     public matches: arg = ( ^ self == arg )
   )
 
@@ -195,6 +199,71 @@ class Kernel vmMirror: vmMirror = Object <: Value (
     public ifNil: goBlock ifNotNil: noGoBlock = ( ^ goBlock value )
   )
 
+  public class OrPattern left: le right: ri = Value ( |
+    private left = le.
+    private right = ri.
+  | )
+  (
+    public matches = (
+        ^ left ifTrue: [ ^ true ] ifFalse: [ right ifTrue: [ ^ true ] ifFalse: [ ^ false ]]
+    )
+  )
+
+  public class AndPattern left: le right: ri = Value ( |
+    private left = le.
+    private right = ri.
+  | )
+  (
+    public matches = (
+        left ifTrue: [ right ifTrue: [ ^ true ] ifFalse: [ ^ false ]] ifFalse: [ ^ false  ]
+    )
+  )
+
+  public class NotPattern pat: p = Value ( |
+    private pattern = pat.
+  | )
+  (
+    public matches = (
+        ^ pattern != true
+    )
+  )
+
+  public class LessThanPattern val: v = Value ( |
+    private val = v.
+  | )
+  (
+    public matches: obj = (
+        ^ obj < val
+    )
+  )
+
+  public class GreaterThanPattern val: v = Value ( |
+    private val = v.
+  | )
+  (
+    public matches: obj = (
+        ^ obj > val
+    )
+  )
+
+  public class LessEqualThanPattern val: v = Value ( |
+    private val = v.
+  | )
+  (
+    public matches: obj = (
+        ^ obj <= val
+    )
+  )
+
+  public class GreaterEqualThanPattern val: v = Value ( |
+    private val = v.
+  | )
+  (
+    public matches: obj = (
+        ^ obj >= val
+    )
+  )
+
   public class Integer = Value ()
   (
     (* Arithmetic *)
@@ -221,6 +290,12 @@ class Kernel vmMirror: vmMirror = Object <: Value (
     public bitXor: argument = ( ^ vmMirror int: self bitXor: argument )
 
     (* Comparing *)
+    (* For prefix operators *)
+    public lessThan = ( ^ LessThanPattern val: self )
+    public greaterThan = ( ^ GreaterThanPattern val: self )
+    public lessEqualThan = ( ^ LessEqualThanPattern val: self )
+    public greaterEqualThan = ( ^ GreaterEqualThanPattern val: self )
+
     public =  argument = ( ^ vmMirror int: self equals: argument )
     public ~= argument = ( ^ (self = argument) not )
     public <  argument = ( ^ vmMirror int: self lessThan: argument )
@@ -280,7 +355,7 @@ class Kernel vmMirror: vmMirror = Object <: Value (
     public max: otherInt = (
       self < otherInt ifTrue: [ ^ otherInt ] ifFalse: [ ^ self ]
     )
-    
+
     public matches: arg = ( ^ self == arg )
   ) : (
     public fromString: aString = ( ^ vmMirror intFromString: aString )
@@ -316,6 +391,12 @@ class Kernel vmMirror: vmMirror = Object <: Value (
     public bitXor: argument = ( ^ vmMirror double: self bitXor: argument )
 
     (* Comparing *)
+    (* For prefix operators *)
+    public lessThan = ( ^ LessThanPattern val: self )
+    public greaterThan = ( ^ GreaterThanPattern val: self )
+    public lessEqualThan = ( ^ LessEqualThanPattern val: self )
+    public greaterEqualThan = ( ^ GreaterEqualThanPattern val: self )
+
     public =  argument = ( ^ vmMirror double: self equals: argument )
     public <  argument = ( ^ vmMirror double: self lessThan: argument )
     public >  argument = ( ^ (self >= argument) and: [ self <> argument ] )
@@ -340,7 +421,7 @@ class Kernel vmMirror: vmMirror = Object <: Value (
       i:: self.
       [ i >= limit ] whileTrue: [ block value: i. i:: i - 1.0 ]
     )
-    
+
     public matches: arg = ( ^ self == arg )
   ) : (
     public PositiveInfinity = ( ^ vmMirror doublePositiveInfinity: nil )
@@ -499,7 +580,7 @@ class Kernel vmMirror: vmMirror = Object <: Value (
 
     (* Printing *)
     public print = ( vmMirror printString: self )
-    
+
     public matches: arg = ( ^ self == arg )
   ) : (
     public fromArray: charArray = (
