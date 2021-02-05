@@ -869,10 +869,9 @@ public class AstBuilder {
       arguments.add(0, receiver);
       SSymbol selectorAfterChecks = selector;
 
-      // if (selector.getString().equals("&")) { FIXME: causes
-      // UnsupportedSpecializationException in modules.grace tests
-      // return explicit(symbolFor("and:"), arguments.get(1), arguments, sourceSection);
-      // }
+      if (selector.getString().equals("&&&")) { // FIXME: causes UnsupportedSpecializationException in modules.grace tests
+        return explicit(symbolFor("and:"), arguments.get(1), arguments, sourceSection);
+      }
 
       if (selector.getString().equals("|")) {
         return explicit(symbolFor("or:"), arguments.get(1), arguments, sourceSection);

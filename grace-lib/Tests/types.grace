@@ -27,27 +27,26 @@ method testPrefixCompares {
     //integer
     var num := 1
     if(!((<4).matches(num))) then { return "testPrefixCompares failed, for less than prefix" }
-    //FIXME: >4 does not work when it is in brackets
-    //if((>4).matches(num)) then { return "testPrefixCompares failed, for greater than prefix" }  //does not cause error when it's only >4
-    //if(!((<=4).matches(num))) then { return "testPrefixCompares failed, for less than or equal prefix" }
-    //num := 4
-    //if(!((<=4).matches(num))) then { return "testPrefixCompares failed, for less than or equal prefix" }
-    //num := 1
-    //if((>=4).matches(num)) then { return "testPrefixCompares failed, for greater than or equal prefix" }
-    //num := 4
-    //if(!((>=4).matches(num))) then { return "testPrefixCompares failed, for greater than or equal prefix" }
+    if(( >4).matches(num)) then { return "testPrefixCompares failed, for greater than prefix" }
+    if(!((<=4).matches(num))) then { return "testPrefixCompares failed, for less than or equal prefix" }
+    num := 4
+    if(!((<=4).matches(num))) then { return "testPrefixCompares failed, for less than or equal prefix" }
+    num := 1
+    if(( >=4).matches(num)) then { return "testPrefixCompares failed, for greater than or equal prefix" }
+    num := 4
+    if(!(( >=4).matches(num))) then { return "testPrefixCompares failed, for greater than or equal prefix" }
 
     //double
-    //num := 1.5
-    //if(!((<4).matches(num))) then { return "testPrefixCompares failed, for less than prefix" }
-    //if((>4).matches(num)) then { return "testPrefixCompares failed, for greater than prefix" }
-    //if(!((<=4).matches(num))) then { return "testPrefixCompares failed, for less than or equal prefix" }
-    //num := 4.0
-    //if(!((<=4).matches(num))) then { return "testPrefixCompares failed, for less than or equal prefix" }
-    //num := 1.5
-    //if((>=4).matches(num)) then { return "testPrefixCompares failed, for greater than or equal prefix" }
-    //num := 4.0
-    //if(!((>=4).matches(num))) then { return "testPrefixCompares failed, for greater than or equal prefix" }
+    num := 1.5
+    if(!((<4).matches(num))) then { return "testPrefixCompares failed, for less than prefix" }
+    if(( >4).matches(num)) then { return "testPrefixCompares failed, for greater than prefix" }
+    if(!((<=4).matches(num))) then { return "testPrefixCompares failed, for less than or equal prefix" }
+    num := 4.0
+    if(!((<=4).matches(num))) then { return "testPrefixCompares failed, for less than or equal prefix" }
+    num := 1.5
+    if(( >=4).matches(num)) then { return "testPrefixCompares failed, for greater than or equal prefix" }
+    num := 4.0
+    if(!(( >=4).matches(num))) then { return "testPrefixCompares failed, for greater than or equal prefix" }
 
     "testPrefixCompares passed"
 }
@@ -57,6 +56,9 @@ method testCombinePatterns {
     if(!num.matches(1)) then { return "testCombinePattern failed, failed on !" }
     if(!(num.matches(4) | num.matches(1))) then { return "testCombinePattern failed, failed on |" }
     if(num.matches(4) | num.matches(5)) then { return "testCombinePattern failed, failed on |" }
+    if(num.matches(4) &&& num.matches(5)) then { return "testCombinePattern failed, failed on &" }
+    if(num.matches(1) &&& num.matches(5)) then { return "testCombinePattern failed, failed on &" }
+    if(!(num.matches(1) &&& num.matches(1))) then { return "testCombinePattern failed, failed on &" }
 
     "testCombinePatterns passed"
 }

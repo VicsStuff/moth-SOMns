@@ -3,9 +3,6 @@ import "mirrors" as mirrors
 import "../Modules/collections" as col  //for error below
 import "../Modules/matrix" as matrix    //for error below
 
-Number.checkOrError(2)   //FIXME: prevents an error in matrix type checking
-matrix.ComparableToMatrix.checkOrError(matrix.matrix(1,1).withAll(col.abbreviations.seq(1)))
-
 method getSuiteByName(name: String) -> Unknown {
   io.importModuleByName(name)
 }
